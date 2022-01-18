@@ -1,3 +1,30 @@
+function doRequest(options, data) {
+  const https = require('https')
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
+      res.setEncoding('utf8')
+      let responseBody = ''
+
+      res.on('data', (chunk) => {
+        responseBody += chunk
+      })
+
+      res.on('end', () => {
+        resolve(JSON.parse(responseBody))
+      })
+    })
+
+    req.on('error', (err) => {
+      reject(err)
+    })
+
+    req.write(data)
+    req.end()
+  })
+}
+
+
+
 const paytmInitiatePayment = async (req, res) => {
   const { amount, name, phone } = req.body
 
